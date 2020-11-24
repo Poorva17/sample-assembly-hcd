@@ -36,6 +36,8 @@ object Common extends AutoPlugin {
     ),
     resolvers += Resolver.url("bintray-sbt-plugins", url("https://dl.bintray.com/sbt/sbt-plugin-releases/"))(Resolver.ivyStylePatterns),
     resolvers += Resolver.bintrayRepo("twtmt", "maven"),
+    resolvers += "MQTT Repository" at "https://repo.eclipse.org/content/repositories/paho-releases/",
+
     version := "0.0.1",
     fork := true,
     parallelExecution in Test := false,

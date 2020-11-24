@@ -53,7 +53,7 @@ class Sample1AssemblyHandlers(
   implicit val ec: ExecutionContextExecutor = ctx.executionContext
   implicit val mat: Materializer            = ActorMaterializer()(ctx.system.toUntyped)
 
-  override def initialize(): Future[Unit] = Future.successful({})
+  override def initialize(): Future[Unit] = Future.successful(println("Hello World ************"))
 
   override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = {}
 

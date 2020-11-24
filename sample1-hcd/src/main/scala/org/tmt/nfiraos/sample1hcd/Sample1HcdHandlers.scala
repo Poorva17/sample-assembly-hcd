@@ -5,6 +5,8 @@ import csw.framework.CurrentStatePublisher
 import csw.framework.scaladsl.ComponentHandlers
 import csw.messages.TopLevelActorMessage
 import csw.messages.commands.{CommandResponse, ControlCommand}
+import csw.framework.scaladsl.{ComponentHandlers, CurrentStatePublisher}
+import csw.messages.commands._
 import csw.messages.framework.ComponentInfo
 import csw.messages.location.TrackingEvent
 import csw.services.alarm.api.scaladsl.AlarmService
@@ -12,17 +14,11 @@ import csw.services.command.CommandResponseManager
 import csw.services.event.api.scaladsl.EventService
 import csw.services.location.scaladsl.LocationService
 import csw.services.logging.scaladsl.LoggerFactory
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence
+import org.eclipse.paho.client.mqttv3.{IMqttDeliveryToken, MqttCallback, MqttClient, MqttMessage}
 
 import scala.concurrent.{ExecutionContextExecutor, Future}
 
-/**
- * Domain specific logic should be written in below handlers.
- * This handlers gets invoked when component receives messages/commands from other component/entity.
- * For example, if one component sends Submit(Setup(args)) command to Sample1Hcd,
- * This will be first validated in the supervisor and then forwarded to Component TLA which first invokes validateCommand hook
- * and if validation is successful, then onSubmit hook gets invoked.
- * You can find more information on this here : https://tmtsoftware.github.io/csw-prod/framework.html
- */
 class Sample1HcdHandlers(
     ctx: ActorContext[TopLevelActorMessage],
     componentInfo: ComponentInfo,
@@ -41,9 +37,16 @@ class Sample1HcdHandlers(
                               alarmService,
                               loggerFactory) {
 
+
   implicit val ec: ExecutionContextExecutor = ctx.executionContext
 
-  override def initialize(): Future[Unit] = Future.successful({})
+  private val log                           = loggerFactory.getLogger
+  val client                                = new HcdMqttClient
+
+  override def initialize(): Future[Unit] = {
+    client.setup()
+    Future.successful({})
+  }
 
   override def onLocationTrackingEvent(trackingEvent: TrackingEvent): Unit = ???
 
